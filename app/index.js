@@ -1,5 +1,7 @@
 'use strict';
 
+const Realm = require('realm');
+
 import React, {Component} from 'react';
 
 import {StyleSheet, NavigatorIOS} from 'react-native';
@@ -7,7 +9,15 @@ import {StyleSheet, NavigatorIOS} from 'react-native';
 import GrabMusic from './components/music/dissoMusic'
 
 export default class Disso extends Component {
-	render() {
+	render(){
+    let realm = new Realm({
+       schema: [{name: 'Dog', properties: {name: 'string'}}]
+     });
+
+     realm.write(() => {
+       realm.create('Dog', {name: 'Rex'});
+     });
+
 		return (
 		 <NavigatorIOS
 			style={styles.container}
@@ -22,7 +32,7 @@ export default class Disso extends Component {
 
 const styles = StyleSheet.create({
 	container: {
-		flexGrow: 1,
-		backgroundColor: '#F5FCFF'
+		flex: 1,
+		backgroundColor: '#FFFFAA'
 	},
 });

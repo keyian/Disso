@@ -8,24 +8,19 @@ var fetch = require('fetch').fetch
 var Web = require('./../misc/web')
 var MusicBox = require('./musicBox')
 
-// var {
-// 	Image,
-// 	ListView,
-// 	StyleSheet,
-// 	Text,
-// 	TouchableHighlight,
-// } = React;
-
 // please get api token here http://www.last.fm/api/account/create
 const API_KEY='b766a12285245c2f7d85fbf077b56429';
-const API_URL = 'https://ws.audioscrobbler.com/2.0/?method=artist.search&artist=c&format=json&limit=20&page=1';
-const REQUEST_URL = API_URL + '&api_key=' + API_KEY;
+const API_URL = 'https://ws.audioscrobbler.com/2.0/?method=artist.search&format=json&limit=5';
 
 const styles = StyleSheet.create({
 	container: {
-		flexGrow: 1,
+		flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
 		backgroundColor: 'white',
-		marginTop: 64
+		marginTop: 64,
+    backgroundColor: '#FFFFAA'
 	}
 });
 
@@ -44,22 +39,31 @@ class GrabMusic extends Component {
 	}
 
 	loadArtists() {
-
+    //&page=1&artist=c
+    if(this.state.isDoneLoading) {
+      this.setState({
+        isDoneLoading: false
+      });
+    }
+    let request_url = API_URL + '&api_key=' + API_KEY;
+    let pgArtistURL = "&page=" + Math.ceil(Math.random()*2000) + "&artist=" + String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    request_url += pgArtistURL;
+    console.log("EY PG ARTIST URL", pgArtistURL);
 		this.setState({
 			isLoading: true
 		});
 
-		fetch(REQUEST_URL)
+		fetch(request_url)
 			.then((response) => response.json())
 			.catch((error) => {
 				console.error(error);
 			})
 			.then((responseData) => {
-        console.log("in request response", responseData.results.artistmatches.artist[0]);
+        console.log("response data of fetch request", responseData);
 				this.setState({
 					isLoading: false,
           isDoneLoading: true,
-          artist: responseData.results.artistmatches.artist[0]
+          artist: responseData.results.artistmatches.artist[Math.floor(Math.random()*5)]
 				});
 			}).catch((error) => {
         console.error(error);
@@ -67,11 +71,33 @@ class GrabMusic extends Component {
 			.done();
 	}
 
+  openPage(url) {
+		this.props.navigator.push({
+			title: 'Web View',
+			component: Web,
+			passProps: {
+				url: url
+			}
+		});
+	}
+
+	spotifySearch(artistName) {
+		let spaceReplacedURL = "spotify:search:"+
+		artistName.split(' ').join('+');
+		this.props.navigator.push({
+			title: 'Web View',
+			component: Web,
+			passProps: {
+				url: spaceReplacedURL
+			}
+		});
+	}
+
 	render() {
     console.log("in render mate");
 		return (
 			<View style={styles.container}>
-        {(this.state.isDoneLoading)?(<MusicBox artist={this.state.artist} />):<View></View>}
+        {(this.state.isDoneLoading)?(<MusicBox spotifySearch={this.spotifySearch.bind(this, this.state.artist.name)} artist={this.state.artist} onClickDisso={this.loadArtists.bind(this)} onOpenPage={this.openPage.bind(this, this.state.artist.url)} />):<View></View>}
 			</View>
 		);
 	}

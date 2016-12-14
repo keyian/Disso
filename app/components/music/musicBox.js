@@ -23,12 +23,16 @@ const styles = StyleSheet.create({
       alignItems: 'center'
   	},
   	name: {
-  		textAlign: 'center',
+  		textAlign: 'left',
   		fontSize: 14,
   		color: '#999999'
   	},
     textLine: {
       marginTop: 40
+    },
+    dissoLogo: {
+      width: 109,
+      height: 109
     }
 });
 
@@ -60,12 +64,7 @@ class MusicBox extends Component {
               <TouchableHighlight
                 onPress={this.props.onClickDisso}
                 underlayColor='transparent'>
-                <Image source={require('../../images/dissoLogo.png')} style={styles.dissoLogo}/>
-              </TouchableHighlight>
-              <TouchableHighlight
-                onPress={this.props.spotifySearch}
-                underlayColor='transparent'>
-                <Text style={styles.name}>Link to Spotify</Text>
+                <Image source={require('../../images/nuDissoButton.png')} style={styles.dissoLogo}/>
               </TouchableHighlight>
 						</View>
 

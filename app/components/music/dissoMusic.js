@@ -7,7 +7,7 @@ import { View, Image, ListView, StyleSheet, Text, TouchableHighlight } from 'rea
 var fetch = require('fetch').fetch
 var Web = require('./../misc/web')
 var MusicBox = require('./musicBox')
-
+var FavoritesList = require('./../favorites/favoriteList');
 // please get api token here http://www.last.fm/api/account/create
 const API_KEY='b766a12285245c2f7d85fbf077b56429';
 const API_URL = 'https://ws.audioscrobbler.com/2.0/?method=artist.search&format=json&limit=5';
@@ -81,23 +81,22 @@ class GrabMusic extends Component {
 		});
 	}
 
-	spotifySearch(artistName) {
-		let spaceReplacedURL = "spotify:search:"+
-		artistName.split(' ').join('+');
-		this.props.navigator.push({
-			title: 'Web View',
-			component: Web,
-			passProps: {
-				url: spaceReplacedURL
-			}
-		});
+	showFavorites() {
+		console.log("something show favorites");
+		// this.props.navigator.push({
+		// 	title: 'My Favorites',
+		// 	component: FavoritesList,
+		// 	passProps: {
+		// 		user: this.props.user
+		// 	}
+		// });
 	}
 
 	render() {
     console.log("in render mate");
 		return (
 			<View style={styles.container}>
-        {(this.state.isDoneLoading)?(<MusicBox spotifySearch={this.spotifySearch.bind(this, this.state.artist.name)} artist={this.state.artist} onClickDisso={this.loadArtists.bind(this)} onOpenPage={this.openPage.bind(this, this.state.artist.url)} />):<View></View>}
+        {(this.state.isDoneLoading)?(<MusicBox showFavorites={this.showFavorites.bind(this)} artist={this.state.artist} onClickDisso={this.loadArtists.bind(this)} onOpenPage={this.openPage.bind(this, this.state.artist.url)} />):<View></View>}
 			</View>
 		);
 	}

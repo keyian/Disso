@@ -26,6 +26,8 @@ let user = {};
 import GrabMusic from '../music/dissoMusic'
 
 export default class Begin extends Component {
+  componentDidMount() {
+  }
 
   beginDisso() {
     this.props.navigator.push({
@@ -37,6 +39,7 @@ export default class Begin extends Component {
   render() {
     return (
       <View style={styles.container}>
+      <Image source={require('../../images/11-18-15.gif')} style={styles.dissoLogo}/>
       <TouchableHighlight
         onPress={this.beginDisso.bind(this)}
         underlayColor='transparent'>

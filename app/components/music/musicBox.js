@@ -10,16 +10,15 @@ const styles = StyleSheet.create({
   		flex: 1,
   		flexDirection: 'row',
   		justifyContent: 'center',
-  		alignItems: 'flex-start',
-  		padding: 0,
-      marginTop: 10
+  		alignItems: 'center',
+  		padding: 10,
+      marginTop: 64
   	},
   	artistImage: {
   		height: 168,
   		width: 252,
-      marginTop: 50,
       flexGrow: 1,
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center'
   	},
   	name: {
@@ -33,6 +32,37 @@ const styles = StyleSheet.create({
     dissoLogo: {
       width: 109,
       height: 109
+    },
+    favNSeeArtistText: {
+      backgroundColor: '#AAAAFF',
+      height: 40,
+      width: 120,
+      margin: 5,
+      fontFamily: 'Courier',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 10,
+      textAlign: 'center'
+    },
+    userBox: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    box: {
+      height: 200,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: 10
+    },
+    infoBox: {
+      margin: 10,
+      height: 150,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between'
     }
 });
 
@@ -45,7 +75,7 @@ class MusicBox extends Component {
 	render() {
 		return (
     <View style={styles.container}>
-						<View>
+		  <View style={styles.box}>
             <TouchableHighlight
       					onPress={this.props.onOpenPage}
       					underlayColor='transparent'>
@@ -56,18 +86,29 @@ class MusicBox extends Component {
 							/>:
               <Text>No Image For This Artist</Text>}
             </TouchableHighlight>
-							<View>
+							<View style={styles.infoBox}>
               <Text style={styles.name}>{this.props.artist.name}</Text>
                 <Text style={styles.textLine}>Listeners on last.fm: {this.props.artist.listeners}</Text>
                 <Text style={styles.textLine}>Click disso for new artist, or click artist for more info</Text>
 							</View>
-              <TouchableHighlight
-                onPress={this.props.onClickDisso}
-                underlayColor='transparent'>
-                <Image source={require('../../images/nuDissoButton.png')} style={styles.dissoLogo}/>
-              </TouchableHighlight>
-						</View>
-
+              <View style={styles.userBox}>
+                <TouchableHighlight
+        					onPress={this.props.onAddFavClick}
+        					underlayColor='transparent'>
+        					<Text style={styles.favNSeeArtistText}>FAVORITE!</Text>
+        				</TouchableHighlight>
+                <TouchableHighlight
+                  onPress={this.props.onClickDisso}
+                  underlayColor='transparent'>
+                  <Image source={require('../../images/nuDissoButton.png')} style={styles.dissoLogo}/>
+                </TouchableHighlight>
+                <TouchableHighlight
+        					onPress={this.props.onSeeFavsClick}
+        					underlayColor='transparent'>
+        					<Text style={styles.favNSeeArtistText}>MY FAVS!</Text>
+        				</TouchableHighlight>
+              </View>
+				</View>
     </View>
 		);
 	}

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { View, Image, ListView, StyleSheet, Text, TouchableHighlight } from 'react-native';
-
+import realm from '../realm/realm'
 // var React = require('react-native')
 var fetch = require('fetch').fetch
 var Web = require('./../misc/web')
@@ -17,21 +17,24 @@ const styles = StyleSheet.create({
 		flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
 		backgroundColor: 'white',
-		marginTop: 64,
-    backgroundColor: '#FFFFAA'
+    backgroundColor: '#FFFFAA',
 	}
 });
 
 class GrabMusic extends Component {
 	constructor(props) {
-		super(props)
+		super(props);
+		let user = realm.objects("User").filtered('fbID = "'+this.props.user.fbID+'"')[0];
+		console.log(user);
 		this.state = {
 			isLoading: false,
 			artist: {},
-      isDoneLoading: false
+      isDoneLoading: false,
+			user: user
 		}
+		console.log("this is now s in user", this.state.user);
 	}
 
 	componentDidMount() {
@@ -59,7 +62,6 @@ class GrabMusic extends Component {
 				console.error(error);
 			})
 			.then((responseData) => {
-        console.log("response data of fetch request", responseData);
 				this.setState({
 					isLoading: false,
           isDoneLoading: true,
@@ -73,7 +75,7 @@ class GrabMusic extends Component {
 
   openPage(url) {
 		this.props.navigator.push({
-			title: 'Web View',
+			title: (this.state.artist.name+" on last.fm"),
 			component: Web,
 			passProps: {
 				url: url
@@ -82,21 +84,50 @@ class GrabMusic extends Component {
 	}
 
 	showFavorites() {
-		console.log("something show favorites");
-		// this.props.navigator.push({
-		// 	title: 'My Favorites',
-		// 	component: FavoritesList,
-		// 	passProps: {
-		// 		user: this.props.user
-		// 	}
-		// });
+		this.props.navigator.push({
+			title: 'My Favorites',
+			component: FavoritesList,
+			passProps: {
+				user: this.state.user
+			}
+		});
 	}
+
+	addFavorite(artist) {
+		let user = this.state.user;
+		console.log("this is user in dissso music", user);
+		let favorites= user.favorites;
+		let favoriteAdded = false;
+		for(let i=0; i<favorites.length; i++) {
+			if(favorites[i].name == artist.name) {
+				console.log("checking add favorite existence. exists...");
+				favoriteAdded = true;
+			}
+		}
+		console.log("this is favorite added boolean", favoriteAdded);
+		if(!favoriteAdded) {
+				console.log("this is artist in favorite added", artist);
+				let fav={};
+	      realm.write(() => {
+	        fav = realm.create('Favorite', {
+	          name: artist.name,
+	          image: artist.image[2]["#text"],
+	          listeners: +artist.listeners,
+						url: artist.url
+	        });
+	      });
+				realm.write(() => {
+					favorites.push(fav);
+				});
+	    }
+			console.log("user after adding favorite");
+		}
 
 	render() {
     console.log("in render mate");
 		return (
 			<View style={styles.container}>
-        {(this.state.isDoneLoading)?(<MusicBox showFavorites={this.showFavorites.bind(this)} artist={this.state.artist} onClickDisso={this.loadArtists.bind(this)} onOpenPage={this.openPage.bind(this, this.state.artist.url)} />):<View></View>}
+        {(this.state.isDoneLoading)?(<MusicBox onSeeFavsClick={this.showFavorites.bind(this)} onAddFavClick={this.addFavorite.bind(this, this.state.artist)} artist={this.state.artist} onClickDisso={this.loadArtists.bind(this)} onOpenPage={this.openPage.bind(this, this.state.artist.url)} />):<View></View>}
 			</View>
 		);
 	}
